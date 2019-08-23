@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class HoldandSlingshot : MonoBehaviour
 {
-    public GameObject parent;
+    public GameObject anchor;
+    private Vector2 anchorFirstPlace;
+    
+    public GameObject firstPlace;
     public bool usingMouse;
 
     [Range(1, 10), SerializeField] private float radius = 1;
@@ -37,8 +40,11 @@ public class HoldandSlingshot : MonoBehaviour
     {
         if (canDrag)
         {
-            parent.transform.position = gameObject.transform.position;
-            gameObject.transform.parent = parent.transform;
+            anchor.transform.position = (Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            anchorFirstPlace = anchor.transform.position;
+            firstPlace.SetActive(true);
+            firstPlace.transform.position = gameObject.transform.position;
+            gameObject.transform.parent = anchor.transform;
             GameVariables.dragable = true;
         }
         else
@@ -50,7 +56,7 @@ public class HoldandSlingshot : MonoBehaviour
 
     void Drag(Vector2 position)
     {
-        gameObject.transform.position = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), parent.transform.position, radius);
+        anchor.transform.position = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), anchorFirstPlace, radius);
     }
 
     void DoAction()
@@ -62,11 +68,12 @@ public class HoldandSlingshot : MonoBehaviour
             canDrag = true;
         } else if (canDrag)
         {
-            desireVelocity = parent.transform.position - gameObject.transform.position;
+            desireVelocity = firstPlace.transform.position - gameObject.transform.position;
             gameObject.transform.parent = null;
             rigidbody.velocity = desireVelocity * multiplierSpeed;
             canDrag = false;
             GameVariables.dragable = false;
+            firstPlace.SetActive(false);
         }
     }
 
@@ -90,7 +97,6 @@ public class HoldandSlingshot : MonoBehaviour
             {
                 if (firstPosition != (Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition))
                 {
-                    Debug.Log("Meong");
                     doAction = false;
                 }
             }
@@ -163,7 +169,7 @@ public class HoldandSlingshot : MonoBehaviour
 
     void BoundingPlayer()
     {
-        transform.position = new Vector2(Mathf.Clamp(transform.position.x, -2.6f, 2.6f), transform.position.y);
+        transform.position = new Vector2(Mathf.Clamp(transform.position.x, -2.7f, 2.7f), transform.position.y);
     }
     
 }
