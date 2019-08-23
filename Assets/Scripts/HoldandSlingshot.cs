@@ -7,7 +7,10 @@ public class HoldandSlingshot : MonoBehaviour
     public GameObject parent;
     public bool usingMouse;
 
-    [Range(1,10)] public float multiplier;
+    [Range(1, 10), SerializeField] private float radius = 1;
+    [Range(1, 10), SerializeField] private float momentumTime;
+    private float timeElapse;
+    [Range(1,10)] public float multiplierSpeed = 3;
     
     private Rigidbody2D rigidbody;
     private Vector2 desireVelocity;
@@ -25,6 +28,8 @@ public class HoldandSlingshot : MonoBehaviour
     {
         if (usingMouse) MouseInput();
         else TouchInput();
+        VelocityHandler();
+        BoundingPlayer();
     }
 
 
@@ -34,6 +39,7 @@ public class HoldandSlingshot : MonoBehaviour
         {
             parent.transform.position = gameObject.transform.position;
             gameObject.transform.parent = parent.transform;
+            GameVariables.dragable = true;
         }
         else
         {
@@ -44,7 +50,7 @@ public class HoldandSlingshot : MonoBehaviour
 
     void Drag(Vector2 position)
     {
-        gameObject.transform.position = (Vector2) Camera.main.ScreenToWorldPoint(position);
+        gameObject.transform.position = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), parent.transform.position, radius);
     }
 
     void DoAction()
@@ -58,8 +64,9 @@ public class HoldandSlingshot : MonoBehaviour
         {
             desireVelocity = parent.transform.position - gameObject.transform.position;
             gameObject.transform.parent = null;
-            rigidbody.velocity = desireVelocity * multiplier;
+            rigidbody.velocity = desireVelocity * multiplierSpeed;
             canDrag = false;
+            GameVariables.dragable = false;
         }
     }
 
@@ -129,5 +136,34 @@ public class HoldandSlingshot : MonoBehaviour
         }
     }
     
+    Vector2 TranslateInsideCircle(Vector2 _position, Vector2 _center, float _radius)
+    {
+        float distance = Vector3.Distance(_position, _center);
+        if (distance >= _radius) //To keep in the inside circle
+        {
+            Vector2 fromOriginToObject = _position - _center;
+            fromOriginToObject *= _radius / distance; 
+            return _center + fromOriginToObject;
+        }
+        return _position;
+    }
+
+    void VelocityHandler()
+    {
+        if (rigidbody.velocity == Vector2.zero)
+        {
+            timeElapse = momentumTime;
+        }
+        else
+        {
+            timeElapse -= Time.deltaTime;
+            rigidbody.velocity *= (timeElapse/momentumTime);
+        }
+    }
+
+    void BoundingPlayer()
+    {
+        transform.position = new Vector2(Mathf.Clamp(transform.position.x, -2.6f, 2.6f), transform.position.y);
+    }
     
 }
