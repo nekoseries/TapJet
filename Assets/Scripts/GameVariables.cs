@@ -5,4 +5,5 @@ using UnityEngine;
 public class GameVariables
 {
     public static bool dragable;
+    /*public static float yVelocity;*/
 }

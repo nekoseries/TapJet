@@ -11,7 +11,7 @@ public class HoldandSlingshot : MonoBehaviour
     public bool usingMouse;
 
     [Range(1, 10), SerializeField] private float radius = 1;
-    [Range(1, 10), SerializeField] private float momentumTime;
+    [Range(1, 15), SerializeField] private float momentumTime;
     private float timeElapse;
     [Range(1,10)] public float multiplierSpeed = 3;
     
@@ -51,12 +51,14 @@ public class HoldandSlingshot : MonoBehaviour
         {
             desireVelocity = Vector2.zero;
             doAction = true;
+            
+            GetComponent<SpriteRenderer>().color = Color.yellow;
         }
     }
 
     void Drag(Vector2 position)
     {
-        anchor.transform.position = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), anchorFirstPlace, radius);
+        gameObject.transform.position = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), firstPlace.transform.position, radius);
     }
 
     void DoAction()
@@ -70,10 +72,13 @@ public class HoldandSlingshot : MonoBehaviour
         {
             desireVelocity = firstPlace.transform.position - gameObject.transform.position;
             gameObject.transform.parent = null;
-            rigidbody.velocity = desireVelocity * multiplierSpeed;
+            rigidbody.velocity = (desireVelocity * multiplierSpeed);
+            /*GameVariables.yVelocity = 0;*/
             canDrag = false;
             GameVariables.dragable = false;
             firstPlace.SetActive(false);
+            
+            GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
 
@@ -89,7 +94,7 @@ public class HoldandSlingshot : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            if (canDrag)
+            if (GameVariables.dragable)
             {
                 Drag(Input.mousePosition);
             }
@@ -97,6 +102,8 @@ public class HoldandSlingshot : MonoBehaviour
             {
                 if (firstPosition != (Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition))
                 {
+                    GetComponent<SpriteRenderer>().color = Color.white;
+                    
                     doAction = false;
                 }
             }
@@ -126,7 +133,13 @@ public class HoldandSlingshot : MonoBehaviour
                         if (canDrag)
                         {
                             Drag(touch.position);
-                        } else doAction = false;
+                        }
+                        else
+                        {
+                            GetComponent<SpriteRenderer>().color = Color.white;
+                            
+                            doAction = false;
+                        }
                         break;
                     
                     case TouchPhase.Ended:
@@ -163,7 +176,20 @@ public class HoldandSlingshot : MonoBehaviour
         else
         {
             timeElapse -= Time.deltaTime;
-            rigidbody.velocity *= (timeElapse/momentumTime);
+            /*if (desireVelocity.y > 0 && gameObject.transform.position.y > 0)
+            {
+                GameVariables.yVelocity = rigidbody.velocity.y;
+                rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+                gameObject.transform.position = new Vector2(gameObject.transform.position.x , 0);
+            }*/
+
+            rigidbody.velocity *= (timeElapse / momentumTime);
+
+            /*if (gameObject.transform.position.y == 0)
+            {
+                GameVariables.yVelocity *= (timeElapse/momentumTime);
+            }*/
+
         }
     }
 

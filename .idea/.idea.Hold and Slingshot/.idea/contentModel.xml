@@ -6,10 +6,16 @@
     <e p="E:\GameProject\UnityProject\GDM\Hold and Slingshot" t="IncludeRecursive">
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="BGScroller.cs" t="Include" />
+        <e p="BGScrollerManager.cs" t="Include" />
         <e p="Scripts" t="Include">
+          <e p="AntiGravityWall.cs" t="Include" />
+          <e p="Blackhole.cs" t="Include" />
+          <e p="CameraMovement.cs" t="Include" />
           <e p="GameVariables.cs" t="Include" />
           <e p="HoldandSlingshot.cs" t="Include" />
           <e p="Portal.cs" t="Include" />
+          <e p="ScrollerHandler.cs" t="Include" />
         </e>
       </e>
       <e p="Hold and Slingshot.sln" t="IncludeFlat" />
