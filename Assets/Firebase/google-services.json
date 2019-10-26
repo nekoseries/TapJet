@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "88038867312",
+    "firebase_url": "https://tapjet-2019.firebaseio.com",
+    "project_id": "tapjet-2019",
+    "storage_bucket": "tapjet-2019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88038867312:android:463223417a2961bc030fb5",
+        "android_client_info": {
+          "package_name": "com.Epsilon.TapJet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "88038867312-7rlgndea7auu3rhfutvdp2rq62fcd6jb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-5wBkFSCcGJwC2FeuHhdzWE8cK8cmJlM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "88038867312-7rlgndea7auu3rhfutvdp2rq62fcd6jb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

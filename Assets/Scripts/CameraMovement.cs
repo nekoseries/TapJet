@@ -18,6 +18,8 @@ public class CameraMovement : MonoBehaviour
     
     void Update()
     {
+        if (!player) return;
+        
         Vector3 velocity = Vector3.zero;
         /*if (Camera.main.WorldToScreenPoint(player.transform.position).y < 1 / 3f * Camera.main.pixelHeight || Camera.main.WorldToScreenPoint(player.transform.position).y > 2 / 3f * Camera.main.pixelHeight)
         {*/

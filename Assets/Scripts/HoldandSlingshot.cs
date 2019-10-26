@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class HoldandSlingshot : MonoBehaviour
 {
-    public GameObject anchor;
-    private Vector2 anchorFirstPlace;
-    
+    public Vector2 anchor;
+    private Vector2 anchorMove;
+
     public GameObject firstPlace;
     public bool usingMouse;
 
@@ -29,6 +29,7 @@ public class HoldandSlingshot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameVariables.pause) return;
         if (usingMouse) MouseInput();
         else TouchInput();
         VelocityHandler();
@@ -36,15 +37,13 @@ public class HoldandSlingshot : MonoBehaviour
     }
 
 
-    void Stop()
+    void Stop(Vector3 input)
     {
         if (canDrag)
         {
-            anchor.transform.position = (Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            anchorFirstPlace = anchor.transform.position;
+            anchor = (Vector2) Camera.main.ScreenToWorldPoint(input);
             firstPlace.SetActive(true);
             firstPlace.transform.position = gameObject.transform.position;
-            gameObject.transform.parent = anchor.transform;
             GameVariables.dragable = true;
         }
         else
@@ -58,7 +57,8 @@ public class HoldandSlingshot : MonoBehaviour
 
     void Drag(Vector2 position)
     {
-        gameObject.transform.position = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), firstPlace.transform.position, radius);
+        anchorMove = TranslateInsideCircle((Vector2) Camera.main.ScreenToWorldPoint(position), anchor, radius);
+        RotatePlayer(anchor - anchor, anchorMove - anchor);
     }
 
     void DoAction()
@@ -70,8 +70,7 @@ public class HoldandSlingshot : MonoBehaviour
             canDrag = true;
         } else if (canDrag)
         {
-            desireVelocity = firstPlace.transform.position - gameObject.transform.position;
-            gameObject.transform.parent = null;
+            desireVelocity = anchor - anchorMove;
             rigidbody.velocity = (desireVelocity * multiplierSpeed);
             /*GameVariables.yVelocity = 0;*/
             canDrag = false;
@@ -88,7 +87,7 @@ public class HoldandSlingshot : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Stop();
+            Stop(Input.mousePosition);
             firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
@@ -126,7 +125,8 @@ public class HoldandSlingshot : MonoBehaviour
                 switch (touch.phase)
                 {
                     case TouchPhase.Began:
-                        Stop();
+                        Stop(touch.position);
+                        firstPosition = Camera.main.ScreenToWorldPoint(touch.position);
                         break;
                     
                     case TouchPhase.Moved:
@@ -136,9 +136,12 @@ public class HoldandSlingshot : MonoBehaviour
                         }
                         else
                         {
-                            GetComponent<SpriteRenderer>().color = Color.white;
-                            
-                            doAction = false;
+                            if (firstPosition != (Vector2) Camera.main.ScreenToWorldPoint(touch.position))
+                            {
+                                GetComponent<SpriteRenderer>().color = Color.white;
+                    
+                                doAction = false;
+                            }
                         }
                         break;
                     
@@ -185,6 +188,8 @@ public class HoldandSlingshot : MonoBehaviour
 
             rigidbody.velocity *= (timeElapse / momentumTime);
 
+            GameVariables.yVelocity = rigidbody.velocity.y;
+
             /*if (gameObject.transform.position.y == 0)
             {
                 GameVariables.yVelocity *= (timeElapse/momentumTime);
@@ -197,5 +202,15 @@ public class HoldandSlingshot : MonoBehaviour
     {
         transform.position = new Vector2(Mathf.Clamp(transform.position.x, -2.7f, 2.7f), transform.position.y);
     }
+
+    void RotatePlayer(Vector2 anchor, Vector2 accordingTo)
+    {
+        transform.rotation = Quaternion.Euler(0f, 0f, AngleSearching(anchor, accordingTo) + -90);
+    }
     
+    protected float AngleSearching(Vector2 anchor, Vector2 accordingTo)
+    {
+        Vector2 difference = anchor - accordingTo;
+        return Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+    }
 }
