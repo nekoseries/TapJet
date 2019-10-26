@@ -9,6 +9,10 @@ public class UIMainMenuManager : MonoBehaviour
 {
     public GameObject namePanel;
     public GameObject leaderboardPanel;
+
+    [SerializeField] private SQLConnector _sqlConnector;
+
+    [SerializeField] private UIScore UIScore;
     
     
     // Start is called before the first frame update
@@ -27,19 +31,21 @@ public class UIMainMenuManager : MonoBehaviour
     public void ConfirmName(TMP_InputField input)
     {
         PlayerPrefs.SetString("name", input.text);
-        PlayerPrefs.SetInt("key", Random.Range(0,1000));
+        PlayerPrefs.SetInt("secretkey", Random.Range(0,1000));
         namePanel.SetActive(false);
     }
 
     public void Leaderboard()
     {
         //open connection
+        _sqlConnector.GetTheScores();
         leaderboardPanel.SetActive(true);
     }
 
     public void CloseLeaderboard()
     {
         //close connection
+        UIScore.CloseUI();
         leaderboardPanel.SetActive(false);
         
     }

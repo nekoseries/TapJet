@@ -2376,7 +2376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anchor: {x: 0, y: 0}
   firstPlace: {fileID: 1923413515}
-  usingMouse: 1
+  usingMouse: 0
   radius: 3
   momentumTime: 11
   multiplierSpeed: 3
