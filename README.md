@@ -1,2 +1,3 @@
-# Hold-and-Slingshot
+# TapJet
  
+A casual game for GDM Competition
